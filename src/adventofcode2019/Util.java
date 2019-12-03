@@ -28,7 +28,7 @@ public class Util {
      * @return a single string
      */
     public static String ReadFileOneLine(String path) {
-        final String DEFAULT_PATH = "src/adventofcode2015/";
+        final String DEFAULT_PATH = "src/adventofcode2019/";
         String fileContent = "";
         try {
             BufferedReader bf = new BufferedReader(new FileReader(DEFAULT_PATH + path));

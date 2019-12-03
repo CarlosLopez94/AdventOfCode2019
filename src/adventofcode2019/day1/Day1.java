@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package adventofcode2019.Day1;
+package day1;
 
 import adventofcode2019.Util;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ public class Day1 {
 
     public void main() {
         //Get input
-        List<String> input = Util.ReadFile("/Day1/input.txt");
+        List<String> input = Util.ReadFile("/day1/input.txt");
         System.out.println("Day 1 - Part 1");
 
         int totalFuel = 0;
