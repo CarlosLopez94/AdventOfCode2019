@@ -54,8 +54,33 @@ public class Day3 {
         }
         System.out.println("Intersections: " + intersections);
         System.out.println("The closest point to origin " + originOffset + " is " + closest + " with a Manhattan distance of " + minManhattan);
-        // printMap(wiresRepresentation, originOffset);
 
+        System.out.println("Day 3 - Part 2");
+        Map<Point, Integer> intersectionSteps = new HashMap<>();
+        for (Point inter : intersections) {
+            intersectionSteps.put(inter, 0);
+        }
+
+        for (Wire wire : wires) {
+            Map<Point, Integer> steps = getIntersectionSteps(wire, intersections, originOffset);
+
+            for (Point interPoint : steps.keySet()) {
+                intersectionSteps.put(interPoint, intersectionSteps.get(interPoint) + steps.get(interPoint));
+            }
+        }
+
+        Point closestBySteps = null;
+        int minimumSteps = Integer.MAX_VALUE;
+
+        for (Point intersection : intersectionSteps.keySet()) {
+            if (intersectionSteps.get(intersection) < minimumSteps) {
+                closestBySteps = intersection;
+                minimumSteps = intersectionSteps.get(intersection);
+            }
+        }
+        
+        System.out.println("The point " + closestBySteps + " has " + minimumSteps + " steps");
+        // printMap(wiresRepresentation, originOffset);
     }
 
     public void mergeWires(int[][] wiresMap, Point offset, List<Wire> wires) {
@@ -108,6 +133,46 @@ public class Day3 {
         }
 
         return intersections;
+    }
+
+    public Map<Point, Integer> getIntersectionSteps(Wire wire, List<Point> intersections, Point offset) {
+        Map<Point, Integer> steps = new HashMap<>();
+        Point last = null;
+        int stepsNumber = 0;
+        for (Point current : wire.getPoints()) {
+            if (last == null) {
+                last = current;
+            } else {
+                int direction = (current.x < last.x) ? -1 : 1; //if current x is less than before then is moving to the left
+                int difference = Math.abs(current.x - last.x);
+                for (int i = 1; i <= difference; i++) {
+                    stepsNumber++;
+
+                    int offsetX = offset.x + last.x + (i * direction);
+                    int offsetY = offset.y + last.y;
+                    Point newPoint = new Point(offsetX, offsetY);
+                    if (intersections.contains(newPoint) && !steps.containsKey(newPoint)) {
+                        steps.put(newPoint, stepsNumber);
+                    }
+                }
+
+                direction = (current.y < last.y) ? -1 : 1; //if current x is less than before then is moving upp
+                difference = Math.abs(current.y - last.y);
+                for (int i = 1; i <= difference; i++) {
+                    stepsNumber++;
+
+                    int offsetX = offset.x + last.x;
+                    int offsetY = offset.y + last.y + (i * direction);
+                    Point newPoint = new Point(offsetX, offsetY);
+                    if (intersections.contains(newPoint) && !steps.containsKey(newPoint)) {
+                        steps.put(newPoint, stepsNumber);
+                    }
+                }
+                last = current;
+            }
+        }
+
+        return steps;
     }
 
     public void printMap(int[][] map, Point origin) {
