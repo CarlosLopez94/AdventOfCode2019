@@ -86,7 +86,7 @@ public class Day3 {
     public void mergeWires(int[][] wiresMap, Point offset, List<Wire> wires) {
         //No visited cells have a value of 0
         //When a cell is visited is incremented by 1; 
-        //If one wire visited several times the same cell it doesn't count as an interception. This means that the cells only can be incremented once per wire
+        //If one wire visited several times the same cell it doesn't count as an interception. This means that the cells only can be incremented once per wire.
         
         
         int intersectionMarker = 1; //Initial interceptionMarker, This variables controls
