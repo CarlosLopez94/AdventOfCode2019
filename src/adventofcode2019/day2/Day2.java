@@ -7,7 +7,6 @@ package adventofcode2019.day2;
 
 import adventofcode2019.Util;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,7 +83,6 @@ public class Day2 {
                     break;
                 case 99:
                     finish = true;
-                    System.out.println(" 99 - Se acaba");
                     break;
                 default:
                     break;

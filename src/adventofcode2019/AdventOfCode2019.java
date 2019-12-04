@@ -6,6 +6,7 @@
 package adventofcode2019;
 
 import adventofcode2019.day2.Day2;
+import adventofcode2019.day3.Day3;
 import day1.Day1;
 import java.util.Scanner;
 
@@ -20,7 +21,7 @@ public class AdventOfCode2019 {
         int day;
         do {
             //day = ReadDay();
-            day = 2; //DELETE
+            day = 3; //DELETE
             switch (day) {
                 case 1:
                     Day1 day1 = new Day1();
@@ -29,6 +30,10 @@ public class AdventOfCode2019 {
                 case 2:
                     Day2 day2 = new Day2();
                     day2.main();
+                    break;
+                case 3:
+                    Day3 day3 = new Day3();
+                    day3.main();
                     break;
                 default:
                     System.out.println("ups, this day isn't avaliable yet! Try again");
