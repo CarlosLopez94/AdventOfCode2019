@@ -78,15 +78,20 @@ public class Day3 {
                 minimumSteps = intersectionSteps.get(intersection);
             }
         }
-        
+
         System.out.println("The point " + closestBySteps + " has " + minimumSteps + " steps");
         // printMap(wiresRepresentation, originOffset);
     }
 
     public void mergeWires(int[][] wiresMap, Point offset, List<Wire> wires) {
+        //No visited cells have a value of 0
+        //When a cell is visited is incremented by 1; 
+        //If one wire visited several times the same cell it doesn't count as an interception. This means that the cells only can be incremented once per wire
+        
+        
+        int intersectionMarker = 1; //Initial interceptionMarker, This variables controls
         for (Wire wire : wires) {
             Point last = null;
-            List<Point> visitedPoints = new ArrayList<>();
             for (Point current : wire.getPoints()) {
                 if (last == null) {
                     last = current;
@@ -97,10 +102,8 @@ public class Day3 {
                         int offsetX = offset.x + last.x + (i * direction);
                         int offsetY = offset.y + last.y;
 
-                        Point newPoint = new Point(offsetX, offsetY);
-                        if (!visitedPoints.contains(newPoint)) {
+                        if (wiresMap[offsetX][offsetY] == intersectionMarker - 1) {
                             wiresMap[offsetX][offsetY]++;
-                            visitedPoints.add(newPoint);
                         }
                     }
 
@@ -110,15 +113,15 @@ public class Day3 {
                         int offsetX = offset.x + last.x;
                         int offsetY = offset.y + last.y + (i * direction);
 
-                        Point newPoint = new Point(offsetX, offsetY);
-                        if (!visitedPoints.contains(newPoint)) {
+                        //It can only by updated if
+                        if (wiresMap[offsetX][offsetY] == intersectionMarker - 1) {
                             wiresMap[offsetX][offsetY]++;
-                            visitedPoints.add(newPoint);
                         }
                     }
                     last = current;
                 }
             }
+            intersectionMarker++; // For each wire, intersectionMarker is incremented
         }
     }
 
