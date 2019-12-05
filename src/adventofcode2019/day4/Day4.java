@@ -20,21 +20,26 @@ public class Day4 {
         String initPass = tokens[0];
         String maximum = tokens[1];
 
-        System.out.println(neverDecrease("111112"));
-
         int validPasswords = 0;
         String password = initPass;
         while (!password.equals(maximum)) {
             if (checkCriteria(password)) {
                 validPasswords++;
-                // System.out.println(password + " --> si");
-            } else {
-
-                //System.out.println(password + " --> no");
             }
             password = getNextPassword(password);
         }
         System.out.println("The number of valid passwords is: " + validPasswords);
+        System.out.println("Day 4 - Part 2");
+        validPasswords = 0;
+        password = initPass;
+        while (!password.equals(maximum)) {
+            if (checkComplexCriteria(password)) {
+                validPasswords++;
+            }
+            password = getNextPassword(password);
+        }
+        System.out.println("The number of valid passwords with complex criteria is: " + validPasswords);
+
     }
 
     public String getNextPassword(String password) {
@@ -77,4 +82,39 @@ public class Day4 {
 
         return neverDecrease;
     }
+
+    public boolean checkComplexCriteria(String password) {
+        return hasJustAPair(password) && neverDecrease(password);
+    }
+
+    public boolean hasJustAPair(String password) {
+        boolean hasValidPair = false;
+
+        int i = 0;
+        int ocurrences = 0;
+        char lastDigit = '*';
+        char currentDigit;
+        while (!hasValidPair && i < password.length()) {
+            if (i == 0) {
+                lastDigit = password.charAt(i);
+            } else {
+                currentDigit = password.charAt(i);
+                if (lastDigit == currentDigit) {
+                    ocurrences++;
+                } else {
+                    hasValidPair = ocurrences == 1;
+                    ocurrences = 0;
+                }
+                lastDigit = currentDigit;
+            }
+            i++;
+        }
+        //Check for the last digits!
+        if(!hasValidPair){
+            hasValidPair = ocurrences == 1;
+        }
+        
+        return hasValidPair;
+    }
+
 }
