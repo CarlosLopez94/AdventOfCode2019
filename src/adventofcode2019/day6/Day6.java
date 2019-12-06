@@ -8,6 +8,7 @@ package adventofcode2019.day6;
 import adventofcode2019.Util;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,6 +34,21 @@ public class Day6 {
         System.out.println(root);
         int total = getTotalOrbitting(root);
         System.out.println("Total orbitting is: " + total);
+        System.out.println("Day 6 - Part 2");
+
+        // Get planets 'YOU' and 'SAN'
+        Planet origin = findPlanetByName(root, "YOU");
+        Planet destiny = findPlanetByName(root, "SAN");
+
+        //Get planets where 'YOU' and 'SAN' are 
+        Planet originParent = origin.getParentPlanet();
+        Planet destinyParent = destiny.getParentPlanet();
+
+        //Find closest Parent to both parent planets.
+        Planet closestParentToBoth = findClosestParent(root, originParent, destinyParent);
+        System.out.println(closestParentToBoth);
+        int jumps = getJumpsfromOriginToDestiny(closestParentToBoth, origin) + getJumpsfromOriginToDestiny(closestParentToBoth, destiny);
+        System.out.println("Jumps: " + jumps);
     }
 
     private Map<String, Set<String>> getPlanetsRelations(List<String> input) {
@@ -77,6 +93,75 @@ public class Day6 {
         return currentTotal;
     }
 
+    private Planet findPlanetByName(Planet root, String nameToFind) {
+        Planet foundPlanet = null;
+        if (root.getName().equals(nameToFind)) {
+            foundPlanet = root;
+        } else {
+            Iterator<Planet> it = root.childPlanets.iterator();
+            while (foundPlanet == null && it.hasNext()) {
+                foundPlanet = findPlanetByName(it.next(), nameToFind);
+            }
+        }
+        return foundPlanet;
+    }
+
+    private Planet findClosestParent(Planet root, Planet child1, Planet child2) {
+        Planet closest = null;
+        if (root.isParent(child1) && root.isParent(child2)) {
+            Iterator<Planet> it = root.getChildPlanets().iterator();
+            boolean founded = false;
+            Planet candidate = null;
+
+            while (!founded && it.hasNext()) {
+                candidate = it.next();
+                founded = candidate.isParent(child1) && candidate.isParent(child2);
+            }
+
+            if (founded) {
+                closest = findClosestParent(candidate, child1, child2);
+            } else {
+                closest = root;
+            }
+
+        }
+        return closest;
+    }
+
+    private int getJumpsfromOriginToDestiny(Planet origin, Planet destiny) {
+        return getJumpsfromOriginToDestinyAux(origin, destiny, 0);
+    }
+
+    /**
+     * DONT CALL THIS METHOD DIRECTLY, CALL 'getJumpsfromOriginToDestiny'
+     * INSTEAD Returns number of jump necessary to reach destiny planet from
+     * origin. planet
+     *
+     * @param origin
+     * @param destiny
+     * @param currentDepth
+     * @return
+     */
+    private int getJumpsfromOriginToDestinyAux(Planet origin, Planet destiny, int currentDepth) {
+        int depth = currentDepth;
+        //If origin is parent of destiny its already orbitting, so there is no jump
+        if (destiny.getParentPlanet().equals(origin)) {
+            return depth;
+        } else {
+            depth++;
+            Iterator<Planet> it = origin.getChildPlanets().iterator();
+            boolean founded = false;
+            while (!founded && it.hasNext()) {
+                Planet candidate = it.next();
+                if (candidate.isParent(destiny)) {
+                    depth = getJumpsfromOriginToDestinyAux(candidate, destiny, depth);
+                }
+            }
+
+            return depth;
+        }
+    }
+
     private class Planet {
 
         private String name;
@@ -116,6 +201,24 @@ public class Day6 {
             } else {
                 return 1 + parentPlanet.getTotalOrbitting();
             }
+        }
+
+        /**
+         * Returns true if 'childCandidate' is a diret or indirect child this
+         * Planet
+         *
+         * @param childCandidate
+         * @return
+         */
+        public boolean isParent(Planet childCandidate) {
+            boolean isChild = childPlanets.contains(childCandidate);
+            if (!isChild) {
+                Iterator<Planet> it = childPlanets.iterator();
+                while (!isChild && it.hasNext()) {
+                    isChild = it.next().isParent(childCandidate);
+                }
+            }
+            return isChild;
         }
 
         @Override
