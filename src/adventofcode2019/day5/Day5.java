@@ -19,10 +19,10 @@ public class Day5 {
         System.out.println("Day 5 - Part 1");
         //Read input
         String input = Util.ReadFileOneLine("day5/input.txt");
-        List<Integer> instructions = inputToIntegerList(input);
+        List<Integer> instructions = Util.stringToIntegerList(input, ",");
 
         System.out.println("Evaluation with a input of '1': ");
-        List<Integer> output = evaluate(instructions, 1);
+        List<Integer> output = evaluate(instructions, 1, 1);
         for (Integer out : output) {
             if (out != 0) {
                 System.out.println(out);
@@ -31,18 +31,31 @@ public class Day5 {
 
         System.out.println("Day 5 - Part 2");
         // Reset input
-        instructions = inputToIntegerList(input);
+        instructions = Util.stringToIntegerList(input, ",");
         
         System.out.println("Evaluation with a input of '5': ");
-        output = evaluate(instructions, 5);
+        output = evaluate(instructions, 5, 5);
         System.out.println(output.get(0));
     }
 
-    private List<Integer> evaluate(List<Integer> instructions, int input) {
+    public List<Integer> evaluate(List<Integer> instructions, int initInput, int inputAfterFirst) {
         List<Integer> output = new ArrayList<>();
         int pointer = 0;
         boolean finish = false;
+
+        // This will be use lately on day 7
+        boolean firstIteration = true;
+        int input;
+        //
+
         while (!finish) {
+            // This will be use lately on day 7
+            input = firstIteration ? initInput : inputAfterFirst;
+            if(firstIteration){
+                firstIteration=false;
+            }
+
+
             int instruction = instructions.get(pointer);
             int opcode = instruction % 100;
             boolean firstParamImmediate = ((instruction / 100) % 10) == 1;
@@ -177,14 +190,5 @@ public class Day5 {
         return value;
     }
 
-    private List<Integer> inputToIntegerList(String input) {
-        List<Integer> list = new ArrayList<>();
-
-        for (String token : input.split(",")) {
-            list.add(Integer.valueOf(token));
-        }
-
-        return list;
-    }
 
 }

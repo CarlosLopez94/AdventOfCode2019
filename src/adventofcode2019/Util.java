@@ -69,4 +69,51 @@ public class Util {
         }
         return fileContent;
     }
+
+
+    public static List<List<Integer>> getAllPermutations(List<Integer> num) {
+        List<List<Integer>> result = new ArrayList<>();
+        //start from an empty list
+        result.add(new ArrayList<>());
+        for (int i = 0; i < num.size(); i++) {
+            //list of list in current iteration of the array num
+            ArrayList<ArrayList<Integer>> current = new ArrayList<>();
+            for (List<Integer> l : result) {
+                // # of locations to insert is largest index + 1
+                for (int j = 0; j < l.size() + 1; j++) {
+                    // + add num[i] to different locations
+                    l.add(j, num.get(i));
+                    ArrayList<Integer> temp = new ArrayList<>(l);
+                    current.add(temp);
+
+                    // - remove num[i] add
+                    l.remove(j);
+                }
+            }
+            result = new ArrayList<>(current);
+        }
+        return result;
+    }
+
+    public static List<Integer> stringToIntegerList(String input, String separator) {
+        List<Integer> list = new ArrayList<>();
+
+        for (String token : input.split(separator)) {
+            list.add(Integer.valueOf(token));
+        }
+
+        return list;
+    }
+
+    public static List<Integer> deepCloneList(List<Integer> list) {
+        List<Integer> newList = new ArrayList<>();
+
+        for (Integer el : list) {
+            newList.add(el);
+        }
+
+        return newList;
+    }
+
+
 }

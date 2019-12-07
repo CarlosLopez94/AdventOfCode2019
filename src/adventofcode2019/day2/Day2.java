@@ -18,11 +18,11 @@ public class Day2 {
     public void main() {
         System.out.println("Day 2 - Part 1");
         String input = Util.ReadFileOneLine("day2/input.txt");
-        List<Integer> inputList = inputToIntegerList(input);
+        List<Integer> inputList = Util.stringToIntegerList(input, ",");
         System.out.println(inputList);
 
         //Make a copy of input
-        List<Integer> firstPartList = deepCloneList(inputList);
+        List<Integer> firstPartList = Util.deepCloneList(inputList);
 
         //Evaluate List (noun are verb are 12 and 2 on this part)
         evaluate(firstPartList, 12, 2);
@@ -37,7 +37,7 @@ public class Day2 {
         while (!found && noun <= 99) {
             verb = 0;
             while (!found && verb <= 99) {
-                secondPartList = deepCloneList(inputList);
+                secondPartList = Util.deepCloneList(inputList);
 
                 evaluate(secondPartList, noun, verb);
 
@@ -90,25 +90,4 @@ public class Day2 {
             currentPos += 4;
         }
     }
-
-    private List<Integer> deepCloneList(List<Integer> list) {
-        List<Integer> newList = new ArrayList<>();
-
-        for (Integer el : list) {
-            newList.add(el);
-        }
-
-        return newList;
-    }
-
-    private List<Integer> inputToIntegerList(String input) {
-        List<Integer> list = new ArrayList<>();
-
-        for (String token : input.split(",")) {
-            list.add(Integer.valueOf(token));
-        }
-
-        return list;
-    }
-
 }
