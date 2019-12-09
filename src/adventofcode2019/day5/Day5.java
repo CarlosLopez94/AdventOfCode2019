@@ -22,7 +22,7 @@ public class Day5 {
         List<Integer> instructions = Util.stringToIntegerList(input, ",");
 
         System.out.println("Evaluation with a input of '1': ");
-        List<Integer> output = evaluate(instructions, 1, 1);
+        List<Integer> output = evaluate(instructions,1);
         for (Integer out : output) {
             if (out != 0) {
                 System.out.println(out);
@@ -34,28 +34,16 @@ public class Day5 {
         instructions = Util.stringToIntegerList(input, ",");
         
         System.out.println("Evaluation with a input of '5': ");
-        output = evaluate(instructions, 5, 5);
+        output = evaluate(instructions, 5);
         System.out.println(output.get(0));
     }
 
-    public List<Integer> evaluate(List<Integer> instructions, int initInput, int inputAfterFirst) {
+    public List<Integer> evaluate(List<Integer> instructions, int input) {
         List<Integer> output = new ArrayList<>();
         int pointer = 0;
         boolean finish = false;
-
-        // This will be use lately on day 7
-        boolean firstIteration = true;
-        int input;
-        //
-
+        int currentInput;
         while (!finish) {
-            // This will be use lately on day 7
-            input = firstIteration ? initInput : inputAfterFirst;
-            if(firstIteration){
-                firstIteration=false;
-            }
-
-
             int instruction = instructions.get(pointer);
             int opcode = instruction % 100;
             boolean firstParamImmediate = ((instruction / 100) % 10) == 1;
@@ -66,13 +54,13 @@ public class Day5 {
             int param3;
             switch (opcode) {
                 case 1:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
 
-                    param2 = getNextInput(instructions, pointer + 2);
+                    param2 = getNextParam(instructions, pointer + 2);
                     param2 = getValue(instructions, param2, secondParamImmediate);
 
-                    param3 = getNextInput(instructions, pointer + 3);
+                    param3 = getNextParam(instructions, pointer + 3);
 
                     instructions.set(param3, param1 + param2);
 
@@ -80,13 +68,13 @@ public class Day5 {
                     pointer += 4;
                     break;
                 case 2:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
 
-                    param2 = getNextInput(instructions, pointer + 2);
+                    param2 = getNextParam(instructions, pointer + 2);
                     param2 = getValue(instructions, param2, secondParamImmediate);
 
-                    param3 = getNextInput(instructions, pointer + 3);
+                    param3 = getNextParam(instructions, pointer + 3);
 
                     instructions.set(param3, param1 * param2);
 
@@ -94,26 +82,28 @@ public class Day5 {
                     pointer += 4;
                     break;
                 case 3:
-                    param1 = getNextInput(instructions, pointer + 1);
-                    instructions.set(param1, input);
+                    param1 = getNextParam(instructions, pointer + 1);
+                    currentInput = getNextInput(input);
+                    instructions.set(param1, currentInput);
 
                     //increse pointer
                     pointer += 2;
                     break;
                 case 4:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
-                    output.add(param1);
+
+                    processNewOutput(output, param1);
 
                     //increse pointer
                     pointer += 2;
                     break;
                 case 5:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
 
                     if (param1 != 0) {
-                        param2 = getNextInput(instructions, pointer + 2);
+                        param2 = getNextParam(instructions, pointer + 2);
                         param2 = getValue(instructions, param2, secondParamImmediate);
 
                         pointer = param2;
@@ -122,11 +112,11 @@ public class Day5 {
                     }
                     break;
                 case 6:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
 
                     if (param1 == 0) {
-                        param2 = getNextInput(instructions, pointer + 2);
+                        param2 = getNextParam(instructions, pointer + 2);
                         param2 = getValue(instructions, param2, secondParamImmediate);
 
                         pointer = param2;
@@ -135,13 +125,13 @@ public class Day5 {
                     }
                     break;
                 case 7:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
 
-                    param2 = getNextInput(instructions, pointer + 2);
+                    param2 = getNextParam(instructions, pointer + 2);
                     param2 = getValue(instructions, param2, secondParamImmediate);
 
-                    param3 = getNextInput(instructions, pointer + 3);
+                    param3 = getNextParam(instructions, pointer + 3);
 
                     if (param1 < param2) {
                         instructions.set(param3, 1);
@@ -151,13 +141,13 @@ public class Day5 {
                     pointer += 4;
                     break;
                 case 8:
-                    param1 = getNextInput(instructions, pointer + 1);
+                    param1 = getNextParam(instructions, pointer + 1);
                     param1 = getValue(instructions, param1, firstParamImmediate);
 
-                    param2 = getNextInput(instructions, pointer + 2);
+                    param2 = getNextParam(instructions, pointer + 2);
                     param2 = getValue(instructions, param2, secondParamImmediate);
 
-                    param3 = getNextInput(instructions, pointer + 3);
+                    param3 = getNextParam(instructions, pointer + 3);
 
                     if (param1 == param2) {
                         instructions.set(param3, 1);
@@ -175,7 +165,14 @@ public class Day5 {
         return output;
     }
 
-    private int getNextInput(List<Integer> instructions, int pointer) {
+    public int getNextInput(int input) {
+        return input;
+    }
+    public void processNewOutput(List<Integer> outputList, int newOutput){
+        outputList.add(newOutput);
+    }
+
+    private int getNextParam(List<Integer> instructions, int pointer) {
         return instructions.get(pointer);
     }
 
