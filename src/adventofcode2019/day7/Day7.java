@@ -24,11 +24,12 @@ public class Day7 {
         List<IntCodeComputer> intCodeComputers = initIntCodeComputers(instructions, names, false);
 
         //Calculate all possible PhaseSettingSequences (permutations)
-        List<List<Integer>> allPhaseSettingSequences = getAllPhaseSettingSequence();
+        List<List<Integer>> allPhaseSettingSequences = getAllPhaseSettingSequence(0, 4);
 
         int maxSignal = Integer.MIN_VALUE;
         for (List<Integer> phaseSettingSequence : allPhaseSettingSequences) {
             //Calculate signal for this PhaseSettingSequence
+            cleanAllQueues(intCodeComputers);
             int currentSignal;
             try {
                 currentSignal = getSignal(intCodeComputers, phaseSettingSequence, 0);
@@ -37,8 +38,28 @@ public class Day7 {
                 e.printStackTrace();
             }
         }
-
         System.out.println("The maximum signal is: " + maxSignal);
+        System.out.println("Day 7 - Part 2");
+
+        intCodeComputers = initIntCodeComputers(instructions, names, true);
+
+        //Calculate all possible PhaseSettingSequences (permutations)
+        allPhaseSettingSequences = getAllPhaseSettingSequence(5, 9);
+
+        maxSignal = Integer.MIN_VALUE;
+        int currentSignal;
+        for (List<Integer> phaseSettingSequence : allPhaseSettingSequences) {
+            cleanAllQueues(intCodeComputers);
+            //Calculate signal for this PhaseSettingSequence
+            try {
+                currentSignal = getSignal(intCodeComputers, phaseSettingSequence, 0);
+                maxSignal = Math.max(maxSignal, currentSignal);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("The maximum signal with feedback is: " + maxSignal);
+
     }
 
     public List<IntCodeComputer> initIntCodeComputers(List<Integer> instructions, List<String> names, boolean feedback) {
@@ -48,11 +69,11 @@ public class Day7 {
         IntCodeComputer lastIntCodeComputer = null;
         for (String name : names) {
             if (lastIntCodeComputer == null) {
-                lastIntCodeComputer = new IntCodeComputer(name, instructions, firstIn, new ArrayBlockingQueue<>(5));
+                lastIntCodeComputer = new IntCodeComputer(name, instructions, firstIn, new ArrayBlockingQueue<>(5), feedback);
             } else {
-                lastIntCodeComputer = new IntCodeComputer(name, instructions, lastIntCodeComputer.outQueue, new ArrayBlockingQueue<>(5));
+                lastIntCodeComputer = new IntCodeComputer(name, instructions, lastIntCodeComputer.outQueue, new ArrayBlockingQueue<>(5), feedback);
             }
-            System.out.println("Create IntCodeComputer '" + name + "'");
+            System.out.println("Create IntCodeComputer '" + name + "'" + (feedback ? " in feedback mode" : ""));
             intCodeComputers.add(lastIntCodeComputer);
         }
 
@@ -63,11 +84,16 @@ public class Day7 {
         return intCodeComputers;
     }
 
+    public void cleanAllQueues(List<IntCodeComputer> intCodeComputers) {
+        for (IntCodeComputer currentIntCodeComputer : intCodeComputers) {
+            currentIntCodeComputer.cleanQueues();
+        }
+    }
+
     public int getSignal(List<IntCodeComputer> intCodeComputers, List<Integer> phaseSettingSequence, int initialInput) throws InterruptedException {
         List<Thread> threads = new ArrayList<>();
         for (IntCodeComputer currentIntCodeComputer : intCodeComputers) {
             int index = intCodeComputers.indexOf(currentIntCodeComputer);
-            currentIntCodeComputer.cleanQueues();
 
             currentIntCodeComputer.inQueue.put(phaseSettingSequence.get(index));
 
@@ -75,50 +101,25 @@ public class Day7 {
             threads.add(currentThread);
             currentThread.start();
         }
-
         intCodeComputers.get(0).inQueue.put(initialInput);
-
         for (Thread thread : threads) {
             thread.join();
         }
 
         return intCodeComputers.get(intCodeComputers.size() - 1).signal;
-        //Run Amplifier 'A'
-       /* List<Integer> instructions = deepCloneList(input);
-        int signalA = intCodeComputer.evaluate(instructions, phaseSettingSequence.get(0), initialInput).get(0);
-
-        //Run Amplifier 'B'
-        instructions = deepCloneList(input);
-        int signalB = intCodeComputer.evaluate(instructions, phaseSettingSequence.get(1), signalA).get(0);
-
-        //Run Amplifier 'C'
-        instructions = deepCloneList(input);
-        int signalC = intCodeComputer.evaluate(instructions, phaseSettingSequence.get(2), signalB).get(0);
-
-        //Run Amplifier 'D'
-        instructions = deepCloneList(input);
-        int signalD = intCodeComputer.evaluate(instructions, phaseSettingSequence.get(3), signalC).get(0);
-
-        //Run Amplifier 'E'
-        instructions = deepCloneList(input);
-        int signalE = intCodeComputer.evaluate(instructions, phaseSettingSequence.get(4), signalD).get(0);
-
-        return signalE;
-    */
     }
 
 
-    private List<List<Integer>> getAllPhaseSettingSequence() {
-        List<Integer> originList = new ArrayList<>();
+    private List<List<Integer>> getAllPhaseSettingSequence(int minValue, int maxValue) {
+        List<Integer> permutationsList = new ArrayList<>();
         //Possible values are {0, 1, 2, 3, 4}
-        originList.add(0);
-        originList.add(1);
-        originList.add(2);
-        originList.add(3);
-        originList.add(4);
+
+        for (int i = minValue; i <= maxValue; i++) {
+            permutationsList.add(i);
+        }
 
         //Get all permutations
-        return Util.getAllPermutations(originList);
+        return Util.getAllPermutations(permutationsList);
     }
 
     private class IntCodeComputer extends Day5 implements Runnable {
@@ -126,15 +127,17 @@ public class Day7 {
         private BlockingQueue<Integer> inQueue;
         private BlockingQueue<Integer> outQueue;
         private List<Integer> instructions;
+        private boolean feedback;
 
         private boolean usedPhaseValue;
         private Integer signal;
 
-        public IntCodeComputer(String name, List<Integer> instructions, BlockingQueue<Integer> inQueue, BlockingQueue<Integer> outQueue) {
+        public IntCodeComputer(String name, List<Integer> instructions, BlockingQueue<Integer> inQueue, BlockingQueue<Integer> outQueue, boolean feedback) {
             this.name = name;
             this.instructions = Util.deepCloneList(instructions);
             this.inQueue = inQueue;
             this.outQueue = outQueue;
+            this.feedback = feedback;
         }
 
         @Override
@@ -142,12 +145,11 @@ public class Day7 {
             int newInput = input;
             try {
                 newInput = inQueue.take(); // phase value
-                if (usedPhaseValue) {
+                if (usedPhaseValue && !feedback) {
                     inQueue.put(newInput); //Feeds himself
-                }else{
+                } else {
                     usedPhaseValue = true;
                 }
-                System.out.println("'" + name + "' uses his store value: " + newInput);
             } catch (
                     InterruptedException e) {
                 e.printStackTrace();
@@ -155,10 +157,24 @@ public class Day7 {
             return super.getNextInput(newInput);
         }
 
+        @Override
+        public void processNewOutput(List<Integer> outputList, int newOutput) {
+            if (feedback) {
+                try {
+                    outQueue.put(newOutput);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            signal = newOutput;
+            super.processNewOutput(outputList, newOutput);
+        }
+
         public void cleanQueues() {
             inQueue.clear();
             outQueue.clear();
         }
+
 
         @Override
         public void run() {
@@ -166,12 +182,11 @@ public class Day7 {
                 usedPhaseValue = false;
                 signal = null;
 
-                this.signal = super.evaluate(Util.deepCloneList(instructions), 0).get(0);
+                super.evaluate(Util.deepCloneList(instructions), 0);
 
-                System.out.println("'" + name + "' has finished!");
-                System.out.println("'" + name + "' is going to output a new value " + signal);
-                outQueue.put(signal);
-                System.out.println("'" + name + "' has output value: " + signal);
+                if (!feedback) {
+                    outQueue.put(signal);
+                }
             } catch (Exception e) {
                 System.out.println("ERROR EN '" + name + "'");
                 e.printStackTrace();
