@@ -3,7 +3,6 @@ package adventofcode2019.day9;
 import adventofcode2019.Day;
 import adventofcode2019.Util;
 
-import java.awt.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +22,10 @@ public class Day9 implements Day {
         System.out.println("Evaluation with a input of '1': ");
         List<BigInteger> output = evaluate(memory, BigInteger.ONE, BigInteger.ZERO);
         System.out.println(output);
+        System.out.println("Day 9 - Part 1");
+        memory = initMemory(instructions);
+        output = evaluate(memory, BigInteger.valueOf(2), BigInteger.ZERO);
+        System.out.println("With an input of '2', the coordinates received are: " + output);
     }
 
     public Map<BigInteger, BigInteger> initMemory(List<Long> instructions) {
