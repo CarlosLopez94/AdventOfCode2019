@@ -105,6 +105,16 @@ public class Util {
         return list;
     }
 
+    public static List<Long> stringToLongList(String input, String separator) {
+        List<Long> list = new ArrayList<>();
+
+        for (String token : input.split(separator)) {
+            list.add(Long.valueOf(token));
+        }
+
+        return list;
+    }
+
     public static List<Integer> deepCloneList(List<Integer> list) {
         List<Integer> newList = new ArrayList<>();
 
