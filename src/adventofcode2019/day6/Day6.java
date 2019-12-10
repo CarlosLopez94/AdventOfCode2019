@@ -5,6 +5,7 @@
  */
 package adventofcode2019.day6;
 
+import adventofcode2019.Day;
 import adventofcode2019.Util;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +20,7 @@ import java.util.TreeSet;
  *
  * @author carlos
  */
-public class Day6 {
+public class Day6 implements Day {
 
     public void main() {
         System.out.println("Day 6 - Part 1");

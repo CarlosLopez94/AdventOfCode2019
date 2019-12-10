@@ -1,5 +1,6 @@
 package adventofcode2019.day7;
 
+import adventofcode2019.Day;
 import adventofcode2019.Util;
 import adventofcode2019.day5.Day5;
 
@@ -7,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-public class Day7 {
+public class Day7 implements Day {
     public void main() {
         System.out.println("Day 7 - Part 1");
         String input = Util.ReadFileOneLine("day7/input.txt");

@@ -5,13 +5,14 @@
  */
 package adventofcode2019.day4;
 
+import adventofcode2019.Day;
 import adventofcode2019.Util;
 
 /**
  *
  * @author carlos
  */
-public class Day4 {
+public class Day4 implements Day {
 
     public void main() {
         System.out.println("Day 4 - Part 1");

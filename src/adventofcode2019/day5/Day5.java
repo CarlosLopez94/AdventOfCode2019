@@ -5,6 +5,7 @@
  */
 package adventofcode2019.day5;
 
+import adventofcode2019.Day;
 import adventofcode2019.Util;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author carlos
  */
-public class Day5 {
+public class Day5 implements Day {
 
     public void main() {
         System.out.println("Day 5 - Part 1");

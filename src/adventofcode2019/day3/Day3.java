@@ -5,6 +5,7 @@
  */
 package adventofcode2019.day3;
 
+import adventofcode2019.Day;
 import adventofcode2019.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.Map;
  *
  * @author carlos
  */
-public class Day3 {
+public class Day3 implements Day {
 
     public void main() {
         System.out.println("Day 3 - Part 1");

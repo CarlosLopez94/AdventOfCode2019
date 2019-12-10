@@ -6,6 +6,7 @@
  */
 package adventofcode2019.day1;
 
+import adventofcode2019.Day;
 import adventofcode2019.Util;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author carlos
  */
-public class Day1 {
+public class Day1 implements Day {
 
     public void main() {
         //Get input

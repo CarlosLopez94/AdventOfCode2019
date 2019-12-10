@@ -22,44 +22,41 @@ public class AdventOfCode2019 {
 
     public static void main(String[] args) {
         System.out.println("Welcome to Advent of Code 2015! Please choose a day between 1 and 25:");
-        int day;
+        int dayNumber;
         do {
-            //day = ReadDay();
-            day = 7; //DELETE
-            switch (day) {
+            //dayNumber = ReadDay();
+            dayNumber = 7; //DELETE
+            Day day = null;
+            switch (dayNumber) {
                 case 1:
-                    Day1 day1 = new Day1();
-                    day1.main();
+                    day = new Day1();
                     break;
                 case 2:
-                    Day2 day2 = new Day2();
-                    day2.main();
+                    day = new Day2();
                     break;
                 case 3:
-                    Day3 day3 = new Day3();
-                    day3.main();
+                    day = new Day3();
                     break;
                 case 4:
-                    Day4 day4 = new Day4();
-                    day4.main();
+                    day = new Day4();
                     break;
                 case 5:
-                    Day5 day5 = new Day5();
-                    day5.main();
+                    day = new Day5();
                     break;
                 case 6:
-                    Day6 day6 = new Day6();
-                    day6.main();
+                    day = new Day6();
                     break;
                 case 7:
-                    Day7 day7 = new Day7();
-                    day7.main();
-                    break;
-
+                    day = new Day7();
+                    b areak;
                 default:
+                    day = null;
                     System.out.println("ups, this day isn't avaliable yet! Try again");
             }
-        } while (day < 0 && day > 25);
+            if (day != null) {
+                day.main();
+            }
+        } while (dayNumber < 0 && dayNumber > 25);
     }
 
     public static int ReadDay() {
