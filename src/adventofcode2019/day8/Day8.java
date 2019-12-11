@@ -40,9 +40,9 @@ public class Day8 implements Day {
         int[][] layerArray = new int[rows][columns];
         int cont = 0;
         for (Integer currentDigit : layer) {
-            String currentChar = "  "; //WHITE
+            String currentChar = "░░"; //WHITE
             if (currentDigit == 1) {
-                currentChar = "█ "; //BLACK
+                currentChar = "██"; //BLACK
             }
 
             if ((cont+1) % columns == 0) {

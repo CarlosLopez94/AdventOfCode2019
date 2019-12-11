@@ -29,7 +29,7 @@ public class AdventOfCode2019 {
         int dayNumber;
         do {
             //dayNumber = ReadDay();
-            dayNumber = 11; //DELETE
+            dayNumber = 8; //DELETE
             Day day;
             switch (dayNumber) {
                 case 1:
