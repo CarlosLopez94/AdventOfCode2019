@@ -7,6 +7,7 @@ package adventofcode2019;
 
 import adventofcode2019.day1.Day1;
 import adventofcode2019.day10.Day10;
+import adventofcode2019.day11.Day11;
 import adventofcode2019.day2.Day2;
 import adventofcode2019.day3.Day3;
 import adventofcode2019.day4.Day4;
@@ -28,7 +29,7 @@ public class AdventOfCode2019 {
         int dayNumber;
         do {
             //dayNumber = ReadDay();
-            dayNumber = 10; //DELETE
+            dayNumber = 11; //DELETE
             Day day;
             switch (dayNumber) {
                 case 1:
@@ -60,6 +61,9 @@ public class AdventOfCode2019 {
                     break;
                 case 10:
                     day = new Day10();
+                    break;
+                case 11:
+                    day = new Day11();
                     break;
                 default:
                     day = null;
