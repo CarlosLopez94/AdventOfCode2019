@@ -22,6 +22,43 @@ public class Day11 implements Day {
         robot.start(squares);
 
         System.out.println("There are " + squares.size() + " visited points.");
+        System.out.println("Day 11 - Part 2");
+
+        robot = new Robot(initPoint, instructions);
+        squares = new HashMap<>();
+        squares.put(initPoint, 1);
+
+        robot.start(squares);
+
+        printSquares(squares);
+    }
+
+    private void printSquares(Map<Point, Integer> squares) {
+        Integer minX = Integer.MAX_VALUE;
+        Integer maxX = Integer.MIN_VALUE;
+        Integer minY = Integer.MAX_VALUE;
+        Integer maxY = Integer.MIN_VALUE;
+        for (Point painted : squares.keySet()) {
+            minX = Math.min(minX, painted.x);
+            maxX = Math.max(maxX, painted.x);
+            minY = Math.min(minY, painted.y);
+            maxY = Math.max(maxY, painted.y);
+        }
+
+        Point currentPosition;
+        for (int i = minY; i <= maxY; i++) {
+            for (int j = minX; j <= maxX; j++) {
+                currentPosition = new Point(j, i);
+                if (squares.containsKey(currentPosition) && squares.get(currentPosition).equals(1)) {
+                    System.out.print("██");
+                }else if(squares.containsKey(currentPosition) && squares.get(currentPosition).equals(0)){
+                    System.out.print("░░");
+                } else {
+                    System.out.print("▒▒");
+                }
+            }
+            System.out.println();
+        }
     }
 
     private class Robot {
