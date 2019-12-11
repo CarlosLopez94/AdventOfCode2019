@@ -42,7 +42,7 @@ public class Day8 implements Day {
         for (Integer currentDigit : layer) {
             String currentChar = "  "; //WHITE
             if (currentDigit == 1) {
-                currentChar = "X "; //BLACK
+                currentChar = "█ "; //BLACK
             }
 
             if ((cont+1) % columns == 0) {
