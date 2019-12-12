@@ -3,6 +3,7 @@ package adventofcode2019.day12;
 import adventofcode2019.Day;
 import adventofcode2019.Util;
 
+import java.math.BigInteger;
 import java.util.*;
 
 public class Day12 implements Day {
@@ -14,18 +15,89 @@ public class Day12 implements Day {
         List<Moon> moons = createMoons(input);
 
 
-
         printMoons(moons, 0); //initial state
         System.out.println();
-        int steps = 1000;
-        for (int i = 1; i <= steps; i++) {
+        long steps = 1000;
+        for (long i = 1; i <= steps; i++) {
             applyAllGravity(moons);
             applyAllVelocity(moons);
-//            printMoons(moons, i);
-  //          System.out.println();
+            //printMoons(moons, i);
+            //System.out.println();
         }
 
-        System.out.println("Total enery in the systme is: " + getTotalEnergy(moons));
+        System.out.println("Total energy in the system is after " + steps + " steps: " + getTotalEnergy(moons));
+        System.out.println("Day 12 - Part 2");
+        moons = createMoons(input);
+
+        List<Long> loopsSteps = new ArrayList<>();
+
+        //Calculate separately the steps requires for each Axis to repeat a state.
+        loopsSteps.add(getLoopOfAxis(moons, "X").longValue());
+        loopsSteps.add(getLoopOfAxis(moons, "Y").longValue());
+        loopsSteps.add(getLoopOfAxis(moons, "Z").longValue());
+
+        //Find the least common multiple of each number of steps to find a state which every axis is repeating
+        Long repeatingAfterSteps = Util.lcm(loopsSteps);
+        System.out.println("A position is repeated after " + repeatingAfterSteps + " steps.");
+    }
+
+    public BigInteger getLoopOfAxis(List<Moon> moons, String axisName) {
+        Map<String, BigInteger> states = new HashMap<>();
+        BigInteger step = BigInteger.ZERO;
+        boolean found = false;
+        BigInteger loopSteps = null;
+        while (!found) {
+            Moon firstMoon;
+            Moon secondMoon;
+            StringBuilder currentStateBuilder = new StringBuilder();
+            for (int i = 0; i < moons.size(); i++) {
+                firstMoon = moons.get(i);
+                for (int j = i; j < moons.size(); j++) {
+                    secondMoon = moons.get(j);
+                    //Apply gravity on current axis
+                    switch (axisName) {
+                        case "X":
+                            firstMoon.applyGravityX(secondMoon.position.x);
+                            secondMoon.applyGravityX(firstMoon.position.x);
+                            break;
+                        case "Y":
+                            firstMoon.applyGravityY(secondMoon.position.y);
+                            secondMoon.applyGravityY(firstMoon.position.y);
+                            break;
+                        case "Z":
+                            firstMoon.applyGravityZ(secondMoon.position.z);
+                            secondMoon.applyGravityZ(firstMoon.position.z);
+                            break;
+                    }
+                }
+                //Apply velocity on currentAxis
+                switch (axisName) {
+                    case "X":
+                        firstMoon.applyVelocityX();
+                        currentStateBuilder.append(firstMoon.position.x).append("#").append(firstMoon.velocity.x);
+                        break;
+                    case "Y":
+                        firstMoon.applyVelocityY();
+                        currentStateBuilder.append(firstMoon.position.y).append("#").append(firstMoon.velocity.y);
+                        break;
+                    case "Z":
+                        firstMoon.applyVelocityZ();
+                        currentStateBuilder.append(firstMoon.position.z).append("#").append(firstMoon.velocity.z);
+                        break;
+                }
+            }
+
+            String currentState = currentStateBuilder.toString();
+            if (!states.containsKey(currentState)) {
+                states.put(currentState, step);
+            } else {
+                loopSteps = step.subtract(states.get(currentState));
+                found = true;
+            }
+            step = step.add(BigInteger.ONE);
+        }
+
+        return loopSteps;
     }
 
     public List<Moon> createMoons(List<String> input) {
@@ -84,32 +156,56 @@ public class Day12 implements Day {
             this.velocity = new Vector(0, 0, 0);
         }
 
-        public void applyGravity(Moon otherMoon) {
-            Vector otherPosition = otherMoon.position;
-
-            if (position.getX() < otherPosition.getX()) {
+        public void applyGravityX(Integer otherX) {
+            if (position.getX() < otherX) {
                 velocity.setX(velocity.getX() + 1);
-            } else if (position.getX() > otherPosition.getX()) {
+            } else if (position.getX() > otherX) {
                 velocity.setX(velocity.getX() - 1);
             }
+        }
 
-            if (position.getY() < otherPosition.getY()) {
+        public void applyVelocityX() {
+            position.setX(position.getX() + velocity.getX());
+        }
+
+
+        public void applyGravityY(Integer otherY) {
+            if (position.getY() < otherY) {
                 velocity.setY(velocity.getY() + 1);
-            } else if (position.getY() > otherPosition.getY()) {
+            } else if (position.getY() > otherY) {
                 velocity.setY(velocity.getY() - 1);
             }
+        }
 
-            if (position.getZ() < otherPosition.getZ()) {
+        public void applyVelocityY() {
+            position.setY(position.getY() + velocity.getY());
+        }
+
+
+        public void applyGravityZ(Integer otherZ) {
+            if (position.getZ() < otherZ) {
                 velocity.setZ(velocity.getZ() + 1);
-            } else if (position.getZ() > otherPosition.getZ()) {
+            } else if (position.getZ() > otherZ) {
                 velocity.setZ(velocity.getZ() - 1);
             }
         }
 
-        public void applyVelocity() {
-            position.setX(position.getX() + velocity.getX());
-            position.setY(position.getY() + velocity.getY());
+        public void applyVelocityZ() {
             position.setZ(position.getZ() + velocity.getZ());
+        }
+
+        public void applyGravity(Moon otherMoon) {
+            Vector otherPosition = otherMoon.position;
+            applyGravityX(otherPosition.getX());
+            applyGravityY(otherPosition.getY());
+            applyGravityZ(otherPosition.getZ());
+
+        }
+
+        public void applyVelocity() {
+            applyVelocityX();
+            applyVelocityY();
+            applyVelocityZ();
         }
 
         public int getPotentialEnergy() {
